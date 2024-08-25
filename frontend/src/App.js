@@ -24,7 +24,16 @@ function App() {
 
   const filterResponse = () => {
     if (!response) return null;
-    return { [selectedFilter]: response[selectedFilter.toLowerCase()] };
+
+    // Mapping selectedFilter to match the response key
+    const filterMap = {
+      'Numbers': 'numbers',
+      'Alphabets': 'alphabets',
+      'Highest lowercase alphabet': 'highest_lowercase_alphabet',
+    };
+
+    const key = filterMap[selectedFilter];
+    return { [selectedFilter]: response[key] };
   };
 
   const handleFilterChange = (e) => {
@@ -69,14 +78,13 @@ function App() {
                 </svg>
               </div>
             </div>
-           
           </div>
           
           <div className="bg-gray-100 p-4 rounded">
             <h3 className="font-semibold mb-2">Filtered Response</h3>
             {filterResponse() && Object.entries(filterResponse()).map(([key, value]) => (
               <div key={key} className="mb-1">
-                <span className="font-medium">{key}:</span> {Array.isArray(value) ? value.join(',') : value}
+                <span className="font-medium">{key}:</span> {Array.isArray(value) ? value.join(', ') : value}
               </div>
             ))}
           </div>
