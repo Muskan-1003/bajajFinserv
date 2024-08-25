@@ -1,24 +1,18 @@
 const express = require('express');
-require('dotenv').config();
 const app = express();
+require('dotenv').config();
 const PORT = process.env.PORT || 3000;
+const cors = require ('cors');
+app.use(cors());
 
-const EMAIL = "muskan.dinesh2021@vitbhopal.ac.in";
-const ROLL_NUMBER = "21BCE11405";
-const FULL_NAME_DOB = "Muskan_Pandey_26012004"; 
 
 app.use(express.json());
 
-app.get('/bfhl', (req, res) => {
-    try {
-        res.status(200).json({
-            operation_code: 1
-        });
-    } catch (error) {
-        console.error('Error handling GET request:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
-    }
-});
+
+const FULL_NAME_DOB = "Muskan_Pandey_26012004"; 
+const EMAIL = "muskan.dinesh2021@vitbhopal.ac.in";
+const ROLL_NUMBER = "21BCE11405";
+
 
 app.post('/bfhl', (req, res) => {
     try {
@@ -28,9 +22,9 @@ app.post('/bfhl', (req, res) => {
             return res.status(400).json({ is_success: false, message: 'Send an array' });
         }
 
-        let highestLowercaseAlphabet = '';
-        const alphabets = [];
         const numbers = [];
+        const alphabets = [];
+        let highestLowercaseAlphabet = '';
 
         data.forEach(item => {
             if (typeof item === 'string') {
@@ -57,6 +51,18 @@ app.post('/bfhl', (req, res) => {
     } catch (error) {
         console.error('Error handling POST request:', error);
         res.status(500).json({ is_success: false, message: 'Internal Server Error' });
+    }
+});
+
+
+app.get('/bfhl', (req, res) => {
+    try {
+        res.status(200).json({
+            operation_code: 1
+        });
+    } catch (error) {
+        console.error('Error handling GET request:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
     }
 });
 
