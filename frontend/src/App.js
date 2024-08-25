@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 
 function App() {
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const [response, setResponse] = useState(null);
-  const [selectedFilters, setSelectedFilters] = useState(['Numbers']);
+  const [selectedFilter, setSelectedFilter] = useState('Numbers');
   const [error, setError] = useState('');
 
   const handleSubmit = async () => {
     try {
       const parsedInput = JSON.parse(input);
-      const res = await fetch('YOUR_API_ENDPOINT', {
+      const res = await fetch('https://bajajfinserv-x1em.onrender.com/bfhl', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(parsedInput),
@@ -24,33 +24,26 @@ function App() {
 
   const filterResponse = () => {
     if (!response) return null;
+    return { [selectedFilter]: response[selectedFilter.toLowerCase()] };
+  };
 
-    let filteredData = {};
-    if (selectedFilters.includes('Numbers')) filteredData.Numbers = response.numbers;
-    if (selectedFilters.includes('Alphabets')) filteredData.Alphabets = response.alphabets;
-    if (selectedFilters.includes('Highest lowercase alphabet')) 
-      filteredData['Highest lowercase alphabet'] = response.highest_lowercase_alphabet;
-
-    return filteredData;
+  const handleFilterChange = (e) => {
+    setSelectedFilter(e.target.value);
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 font-sans">
-      <div className="mb-6 relative">
-        <textarea 
+    <div className="max-w-md mx-auto p-6 font-sans">
+      <div className="mb-4 relative">
+        <input 
           value={input} 
           onChange={(e) => setInput(e.target.value)}
-          rows={4}
-          className="w-full p-2 pt-6 border border-gray-300 rounded resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder=" "
+          className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="API Input"
         />
-        <label className="absolute text-sm text-gray-500  duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white text-slate-400 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">
-          API Input
-        </label>
       </div>
       <button 
         onClick={handleSubmit}
-        className="w-full mt-2 py-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-200"
+        className="w-full py-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-200"
       >
         Submit
       </button>
@@ -58,26 +51,32 @@ function App() {
       {error && <p className="text-red-500 mb-4">{error}</p>}
       
       {response && (
-        <div>
-          <div className="mb-4">
-            <label className="block mb-2 font-semibold">Multi Filter</label>
-            <select 
-              multiple 
-              value={selectedFilters} 
-              onChange={(e) => setSelectedFilters(Array.from(e.target.selectedOptions, option => option.value))}
-              className="w-full p-2 border border-gray-300 rounded"
-            >
-              <option value="Numbers">Numbers</option>
-              <option value="Alphabets">Alphabets</option>
-              <option value="Highest lowercase alphabet">Highest lowercase alphabet</option>
-            </select>
+        <div className="mt-4">
+          <div className="mb-4 relative">
+            <div className="inline-block relative w-full">
+              <select 
+                value={selectedFilter} 
+                onChange={handleFilterChange}
+                className="block appearance-none w-full bg-white border border-gray-300 hover:border-gray-400 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+              >
+                <option value="Numbers">Numbers</option>
+                <option value="Alphabets">Alphabets</option>
+                <option value="Highest lowercase alphabet">Highest lowercase alphabet</option>
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                </svg>
+              </div>
+            </div>
+           
           </div>
           
           <div className="bg-gray-100 p-4 rounded">
             <h3 className="font-semibold mb-2">Filtered Response</h3>
             {filterResponse() && Object.entries(filterResponse()).map(([key, value]) => (
               <div key={key} className="mb-1">
-                <span className="font-medium">{key}:</span> {Array.isArray(value) ? value.join(', ') : value}
+                <span className="font-medium">{key}:</span> {Array.isArray(value) ? value.join(',') : value}
               </div>
             ))}
           </div>
